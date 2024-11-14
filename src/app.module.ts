@@ -5,10 +5,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
+import { InfoModule } from './info/info.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth.guard';
 
 @Module({
   imports: [
     JwtModule.register({
+      global: true, // 指定全局模块
       secret: 'sens',
       signOptions: {
         expiresIn: '7d',
@@ -31,8 +35,15 @@ import { User } from './user/entities/user.entity';
       },
     }),
     UserModule,
+    InfoModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard,
+    // },
+  ],
 })
 export class AppModule {}

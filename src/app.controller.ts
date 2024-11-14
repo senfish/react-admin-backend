@@ -8,10 +8,10 @@ export class AppController {
     private readonly appService: AppService,
     private readonly jwtService: JwtService,
   ) {}
-  // @Get('/hello')
-  // getHello(): string {
-  //   return this.appService.getHello();
-  // }
+  @Get('/hello')
+  getHello(): string {
+    return this.appService.getHello();
+  }
   // @Post('/login')
   // login(@Body() dto: { user_name: string; password: string }) {
   //   const token = this.jwtService.sign(
