@@ -1,30 +1,53 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { IS_PUBLIC_KEY } from './public';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './user/entities/user.entity';
+import { Repository } from 'typeorm';
 
-// 主要就是拿到resquest，然后你自己根据业务逻辑对request进行一些处理、拦截
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private refReflector: Reflector,
+    @InjectRepository(User)
+    private usesRepository: Repository<User>,
+  ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request: Request = context.switchToHttp().getRequest();
-    const authorization = request.header('authorization') || '';
-    const bearer = authorization.split(' ');
-    if (!bearer || bearer.length < 2) {
-      throw new UnauthorizedException('登录token错误');
+    const isPublic = this.refReflector.getAllAndOverride(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (isPublic) {
+      return true;
     }
-    const token = bearer[1];
+    const request = context.switchToHttp().getRequest();
+    const tokens = request.headers?.authorization?.split(' ') || [];
+    if (!tokens || tokens.length < 2) {
+      throw new UnauthorizedException('token错误');
+    }
     try {
-      const info = await this.jwtService.verifyAsync(token);
-      request['user'] = info;
-    } catch (err) {
-      throw new UnauthorizedException('登录 token 失效，请重新登录', err);
+      // 校验有效期之后，还需要从数据库里面查一下，这个人有没有被删吧？
+      const tokenInfo = this.jwtService.verify(tokens[1]);
+      const sqlTarget = await this.usesRepository.findOneBy({
+        id: tokenInfo.user.id,
+      });
+      if (!sqlTarget) {
+        throw new UnauthorizedException('用户不存在，请重新注册');
+      }
+      request.user = tokenInfo;
+      return true;
+    } catch (e) {
+      console.log('e: ', e);
+      throw new UnauthorizedException('token已失效，请重新登录');
     }
-    return true;
   }
 }

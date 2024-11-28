@@ -23,7 +23,11 @@ export class User {
     comment: '密码',
   })
   password: string;
-
+  @Column({
+    type: 'enum',
+    enum: [1, 2, 3],
+  })
+  role: number;
   @CreateDateColumn({
     comment: '创建时间',
   })

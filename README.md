@@ -1,116 +1,130 @@
-## 踩坑
 
-生成一个user 的 resource
+项目启动之后，添加一个user模块
+## 创建 user 模块
+```ts
+npm g resource user
+```
+
+## 连接数据库
 
 ```bash
-
-nest g resource user
+npm install --save @nestjs/typeorm typeorm mysql2
 ```
 
-### findOneBy
-
-```ts
-const foundUser = await this.userRepository.findOneBy({
-  username: loginDto.username,
-});
-```
-
-如果findOneBy给了一个undefined的值，会从数据库里面找到第一个条数据，所以一定要进行undefined拦截
-
-## Guard 守卫
-
-Guard可以作用在controller、method、global-scoped，可以使用UseGuard()来设置一个controller级别的守卫
-
-### method设置Guard
-
-```ts
-@Controller('user')
-export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private jwtService: JwtService,
-  ) {}
-  @Get('getList')
-  @UseGuards(AuthGuard)
-  async test(@Request() req) {
-    return req.user;
-  }
-}
-```
-
-### controller设置Guard
-
-```ts
-@UseGuards(AuthGuard)
-@Controller('user')
-export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private jwtService: JwtService,
-  ) {}
-  @Get('getList')
-  async test(@Request() req) {
-    return req.user;
-  }
-}
-```
-
-### Global
-
-```ts
-const app = await NestFactory.create(AppModule);
-app.useGlobalGuards(new AuthGuard());
-```
-
-[原地址](https://blog.csdn.net/gwdgwd123/article/details/106119226)
-注意：
-如果AuthGuard里面已经用了其他的service，会出现错误
-
-![image.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/bfde07aea990413ca47230864124a7d2~tplv-73owjymdk6-jj-mark-v1:0:0:0:0:5o6Y6YeR5oqA5pyv56S-5Yy6IEAgc2Vuc0Zlbmc=:q75.awebp?policy=eyJ2bSI6MywidWlkIjoiMzg2MTE0MDU2OTA3Nzk1MCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1731675248&x-orig-sign=qOKhPl%2FTHKa99tLtEmb9Qw4e1XM%3D)
-
-### 新增AuthGuard对接口进行拦截
-
-守卫是在所有中间件之后，任何拦截器/管道之前执行
+### 创建 user 实体类
+user/entities/user.entity.ts
 
 ```ts
 import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Injectable()
-export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request: Request = context.switchToHttp().getRequest();
-    const authorization = request.header('authorization') || '';
-    const bearer = authorization.split(' ');
-    if (!bearer || bearer.length < 2) {
-      throw new UnauthorizedException('登录token错误');
-    }
-    const token = bearer[1];
-    try {
-      const info = await this.jwtService.verifyAsync(token);
-      request['user'] = info;
-    } catch (err) {
-      throw new UnauthorizedException('登录 token 失效，请重新登录', err);
-    }
-    return true;
-  }
+@Entity()
+export class User {
+  // 主键
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({
+    length: 50,
+    comment: '用户名',
+  })
+  username: string;
+
+  @Column({
+    length: 50,
+    comment: '密码',
+  })
+  password: string;
+
+  @CreateDateColumn({
+    comment: '创建时间',
+  })
+  createTime: Date;
+
+  @UpdateDateColumn({
+    comment: '更新时间',
+  })
+  updateTime: Date;
 }
+
 ```
 
-用法
+
+在AppModule里面引入TypeOrmModule，并且添加user实体类
 
 ```ts
-// service里面
-  @Get('a')
-  @UseGuards(AuthGuard)
-  async test(@Request() req) {
-    return req.user;
-  }
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './user/entities/user.entity';
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3000,
+      username: 'root',
+      password: 'sens',
+      logging: true,
+      poolSize: 10,
+      connectorPackage: 'mysql2',
+      extra: {
+        authPlugin: 'sha256_password',
+      },
+      synchronize: true,
+      entities: [User],
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+```
+### 子模块操作数据库
+
+#### 在user模块内注册存储库
+user/user.module.ts
+```ts
+import { Module } from '@nestjs/common';
+import { UserService } from './user.service';
+import { UserController } from './user.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([User])],
+  controllers: [UserController],
+  providers: [UserService],
+})
+export class UserModule {}
+```
+
+#### 再注入User对应的Repository
+
+```ts
+export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private usesRepository: Repository<User>,
+  ) {}
+
+}
+
+```
+然后就可以在userService里面用存储库的方法来操作数据库了。
+
+完善一下register/login的逻辑
+
+
+### 加入jwt
+
+```bash
+ npm install @nestjs/jwt
 ```
