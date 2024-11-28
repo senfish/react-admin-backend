@@ -19,14 +19,14 @@ services:
     networks:
       - common-networks
     volumes:
-      # - /root/mysql-volumes/mysql:/var/lib/mysql
-      - /Users/bytedance/Desktop/mysql:/var/lib/mysql
+      - /root/mysql-volumes/mysql:/var/lib/mysql
+      # - /Users/bytedance/Desktop/mysql:/var/lib/mysql
   redis-container:
     image: redis
     networks:
       - common-networks
     volumes:
-    # - /root/redis-volumes/redis:/data
+      # - /root/redis-volumes/redis:/data
       - /root/redis-volumes/redis:/data
 networks:
   common-networks:
