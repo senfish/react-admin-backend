@@ -1,4 +1,3 @@
-version: '3'
 services:
   nest-app:
     build:
@@ -11,6 +10,7 @@ services:
       - 3000:3000
     networks:
       - common-networks
+
   mysql-container:
     image: mysql
     environment:
@@ -19,15 +19,14 @@ services:
     networks:
       - common-networks
     volumes:
-      - /root/mysql-volumes/mysql:/var/lib/mysql
-      # - /Users/bytedance/Desktop/mysql:/var/lib/mysql
+      - /root/mysql-volumes:/var/lib/mysql
   redis-container:
     image: redis
     networks:
       - common-networks
     volumes:
-      # - /root/redis-volumes/redis:/data
       - /root/redis-volumes/redis:/data
+
 networks:
   common-networks:
     driver: bridge

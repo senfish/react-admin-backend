@@ -1,4 +1,11 @@
-import { Controller, Get, HttpStatus, Inject } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Inject,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { DataSource } from 'typeorm';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
@@ -35,7 +42,8 @@ export class AppController {
   })
   @Get()
   @Public()
-  async getHello(): Promise<string> {
+  async getHello(@Query() query): Promise<string> {
+    console.log('query: ', query);
     // this.dataSource.getRepository().findOne({})
     const keys = await this.redisClient.keys(`*`);
     console.log('keys:===> ', keys);
