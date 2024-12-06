@@ -29,6 +29,7 @@ export class UserController {
     @Body(ValidationPipe) body: LoginDto,
     @Res({ passthrough: true }) response: Response,
   ) {
+    console.log('body: ', body);
     const token = await this.userService.login(body, response);
     return {
       data: {
@@ -55,7 +56,6 @@ export class UserController {
   @HttpCode(200)
   @Post('/delete')
   async delete(@Body('id') id: DeleteUserDto, @Req() req) {
-    console.log('id: ', id);
     return {
       data: await this.userService.delete(id, req),
       message: 'success',
