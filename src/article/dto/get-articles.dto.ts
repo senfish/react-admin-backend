@@ -1,5 +1,4 @@
 export class ArticleListReqDto {
-  cursor: string;
   sort_type: number;
   user_id: string;
   pageSize: number;

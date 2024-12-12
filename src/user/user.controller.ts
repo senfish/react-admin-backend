@@ -29,7 +29,6 @@ export class UserController {
     @Body(ValidationPipe) body: LoginDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    console.log('body: ', body);
     const token = await this.userService.login(body, response);
     return {
       data: {
@@ -65,7 +64,6 @@ export class UserController {
   @HttpCode(200)
   @Post('/list')
   async list(@Body() body) {
-    console.log('body: ', body);
     return {
       data: await this.userService.list(body),
       message: 'success',

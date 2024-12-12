@@ -21,7 +21,7 @@ export class ArticleController {
   @HttpCode(200)
   async getArticleList(@Body() body: ArticleListReqDto) {
     const { currentTag = '1' } = body;
-    const info = (await requestArticle(body)) as unknown as any;
+    const info = (await requestArticle()) as unknown as any;
     const data = info?.data?.map((item) => {
       return {
         title: item.article_info.title,

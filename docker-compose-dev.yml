@@ -1,0 +1,39 @@
+services:
+  nest-app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    depends_on:
+      - mysql-container
+      - redis-container
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - common-networks
+
+  mysql-container:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: sens
+      MYSQL_DATABASE: login_test
+    restart: always
+    ports:
+      - 3306:3306
+    networks:
+      - common-networks
+    volumes:
+      - /Users/sens/Desktop/mysql-volumes:/var/lib/mysql
+  redis-container:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - common-networks
+    volumes:
+      - /Users/sens/Desktop/redis-volumes:/data
+
+networks:
+  common-networks:
+    driver: bridge

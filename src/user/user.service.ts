@@ -28,11 +28,10 @@ const md5 = (str) => {
 export class UserService {
   constructor(
     private jwtService: JwtService,
-    @InjectRepository(User)
-    private usesRepository: Repository<User>,
     private monitorService: MonitorService,
   ) {}
-
+  @InjectRepository(User)
+  private usesRepository: Repository<User>;
   async login(body: LoginDto, response: Response) {
     const target = await this.usesRepository.findOneBy({
       username: body.username,

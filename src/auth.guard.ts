@@ -11,6 +11,7 @@ import { IS_PUBLIC_KEY } from './public';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -35,8 +36,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('token错误');
     }
     try {
-      // 校验有效期之后，还需要从数据库里面查一下，这个人有没有被删吧？
-      const tokenInfo = this.jwtService.verify(tokens[1]);
+      // 校验有效期之后，还需要从数据库里面查一下，这个人有没有被删？
+      // TODO 应该从redis查，
+      const tokenInfo = await this.jwtService.verifyAsync(tokens[1]);
       const sqlTarget = await this.usesRepository.findOneBy({
         id: tokenInfo.user.id,
       });

@@ -11,10 +11,12 @@ import { DataSource } from 'typeorm';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Public } from './public';
 import { RedisClientType } from 'redis';
+import { ConfigService } from '@nestjs/config';
 
 @Controller()
 export class AppController {
   constructor(
+    private readonly config: ConfigService,
     private readonly appService: AppService,
     private dataSource: DataSource,
   ) {}

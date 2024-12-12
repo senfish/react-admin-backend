@@ -1,130 +1,25 @@
+## react-admin-backend后端服务
 
-项目启动之后，添加一个user模块
-## 创建 user 模块
-```ts
-npm g resource user
-```
+[体验地址](http://123.60.67.225/home)
 
-## 连接数据库
+技术栈为 `nestjs` + `mysql` + `typeorm` + `redis`
 
-```bash
-npm install --save @nestjs/typeorm typeorm mysql2
-```
+## 功能
 
-### 创建 user 实体类
-user/entities/user.entity.ts
+- [x] 登录注册
+- [x] JWT 认证
+- [x] 监控模块
+- [x] 技术文章模块
+- [x] 用户模块
 
-```ts
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+## 使用
 
-@Entity()
-export class User {
-  // 主键
-  @PrimaryGeneratedColumn()
-  id: number;
+> 需要本地有mysql数据库，建议使用docker来启动数据库
 
-  @Column({
-    length: 50,
-    comment: '用户名',
-  })
-  username: string;
+`npm install`
 
-  @Column({
-    length: 50,
-    comment: '密码',
-  })
-  password: string;
+`npm run start`
 
-  @CreateDateColumn({
-    comment: '创建时间',
-  })
-  createTime: Date;
+## 部署
 
-  @UpdateDateColumn({
-    comment: '更新时间',
-  })
-  updateTime: Date;
-}
-
-```
-
-
-在AppModule里面引入TypeOrmModule，并且添加user实体类
-
-```ts
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/entities/user.entity';
-@Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3000,
-      username: 'root',
-      password: 'sens',
-      logging: true,
-      poolSize: 10,
-      connectorPackage: 'mysql2',
-      extra: {
-        authPlugin: 'sha256_password',
-      },
-      synchronize: true,
-      entities: [User],
-    }),
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
-
-```
-### 子模块操作数据库
-
-#### 在user模块内注册存储库
-user/user.module.ts
-```ts
-import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-
-@Module({
-  imports: [TypeOrmModule.forFeature([User])],
-  controllers: [UserController],
-  providers: [UserService],
-})
-export class UserModule {}
-```
-
-#### 再注入User对应的Repository
-
-```ts
-export class UserService {
-  constructor(
-    @InjectRepository(User)
-    private usesRepository: Repository<User>,
-  ) {}
-
-}
-
-```
-然后就可以在userService里面用存储库的方法来操作数据库了。
-
-完善一下register/login的逻辑
-
-
-### 加入jwt
-
-```bash
- npm install @nestjs/jwt
-```
+采用`docker`容器化部署

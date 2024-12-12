@@ -8,17 +8,16 @@ export type MonitorType =
   /** 删除 */
   | 3
   /** 登录 */
-  | 4;
-
+  | 4
+  /** 查看文章 */
+  | 5;
 export class CreateMonitorDto {
-  @IsNotEmpty()
   user: string;
 
   @IsNotEmpty()
   @IsNumber()
   type: MonitorType;
 
-  @IsNotEmpty()
   time: string;
 
   @IsNotEmpty()

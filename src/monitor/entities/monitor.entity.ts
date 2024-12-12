@@ -10,9 +10,9 @@ export class Monitor {
   user: string;
 
   @Column({
-    comment: '类型, 1: 新增，2: 修改，3: 删除，4: 登录 ',
+    comment: '类型, 1: 新增，2: 修改，3: 删除，4: 登录, 5: 查看文章 ',
     type: 'enum',
-    enum: [1, 2, 3, 4],
+    enum: [1, 2, 3, 4, 5],
   })
   type: MonitorType;
   @Column()
