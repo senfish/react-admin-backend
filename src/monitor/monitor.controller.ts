@@ -32,19 +32,17 @@ export class MonitorController {
   }
 
   @Post('/track')
+  @HttpCode(HttpStatus.OK)
   async createMonitor(
     @Body(ValidationPipe) createMonitorDto: CreateMonitorDto,
     @Request() req,
   ) {
-    console.log('req', req.user);
-    console.log('createMonitorDto: ', createMonitorDto);
     const newMonitorDto = {
       user: req.user?.user?.username,
       module: createMonitorDto.module,
       time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       type: createMonitorDto.type,
     };
-    console.log('newMonitorDto: ', newMonitorDto);
-    return await this.monitorService.create(createMonitorDto);
+    return await this.monitorService.create(newMonitorDto);
   }
 }

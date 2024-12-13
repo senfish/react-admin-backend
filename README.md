@@ -2,7 +2,7 @@
 
 [体验地址](http://123.60.67.225/home)
 
-技术栈为 `nestjs` + `mysql` + `typeorm` + `redis`
+技术栈为 `NestJs` + `MySQL` + `TypeORM` + `Redis`
 
 ## 功能
 

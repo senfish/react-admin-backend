@@ -21,7 +21,7 @@ export class MonitorService {
       monitor.time = dayjs(createMonitorDto.time).toDate();
       monitor.user = createMonitorDto.user;
       monitor.type = createMonitorDto.type;
-      await this.usesRepository.save(createMonitorDto);
+      await this.usesRepository.save(monitor);
       return new HttpException(
         {
           code: '200',
