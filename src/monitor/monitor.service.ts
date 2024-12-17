@@ -48,8 +48,6 @@ export class MonitorService {
 
     const where: FindOptionsWhere<Monitor> = {};
 
-    // const startTime = dayjs(body.time[0]).toDate();
-    // const endTime = dayjs('2024-11-27').add(1, 'day').toDate();
     if (body.time) {
       const startTime = dayjs(body.time[0]).toDate();
       const endTime = dayjs(body.time[1]).add(1, 'day').toDate();

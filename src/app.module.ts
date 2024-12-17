@@ -12,6 +12,12 @@ import { ArticleModule } from './article/article.module';
 import { MonitorModule } from './monitor/monitor.module';
 import { createClient } from 'redis';
 import { ConfigService, ConfigModule } from '@nestjs/config';
+import * as dayjs from 'dayjs';
+import * as utc from 'dayjs/plugin/utc';
+import * as timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Shanghai');
 
 @Module({
   imports: [

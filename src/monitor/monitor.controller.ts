@@ -40,7 +40,7 @@ export class MonitorController {
     const newMonitorDto = {
       user: req.user?.user?.username,
       module: createMonitorDto.module,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      time: dayjs().tz().format('YYYY-MM-DD HH:mm:ss'),
       type: createMonitorDto.type,
     };
     return await this.monitorService.create(newMonitorDto);

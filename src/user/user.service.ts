@@ -57,7 +57,7 @@ export class UserService {
       this.monitorService.create({
         user: body.username,
         module: MODULE_MAP.USER_LOGIN,
-        time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        time: dayjs().tz().format('YYYY-MM-DD HH:mm:ss'),
         type: 4,
       });
 
@@ -95,7 +95,7 @@ export class UserService {
     this.monitorService.create({
       user: request.user?.user?.username,
       module: MODULE_MAP.USER_MANAGE,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      time: dayjs().tz().format('YYYY-MM-DD HH:mm:ss'),
       type: 1,
     });
     return new HttpException(
@@ -160,7 +160,7 @@ export class UserService {
       this.monitorService.create({
         user: request.user?.user?.username,
         module: MODULE_MAP.USER_MANAGE,
-        time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        time: dayjs().tz().format('YYYY-MM-DD HH:mm:ss'),
         type: 3,
       });
       return '删除成功';
@@ -186,7 +186,7 @@ export class UserService {
     this.monitorService.create({
       user: request.user?.user?.username,
       module: MODULE_MAP.USER_MANAGE,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      time: dayjs().tz().format('YYYY-MM-DD HH:mm:ss'),
       type: 2,
     });
     return 'success';
