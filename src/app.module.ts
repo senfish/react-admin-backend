@@ -37,7 +37,7 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
             authPlugin: 'sha256_password',
           },
           synchronize: true,
-          timezone: '+08:00',
+          timezone: 'Z',
           entities: [User, Monitor],
         } as TypeOrmModuleOptions;
       },
