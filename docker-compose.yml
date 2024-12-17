@@ -17,6 +17,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: sens
       MYSQL_DATABASE: login_test
+      TZ: Asia/Shanghai
     restart: always
     ports:
       - 3306:3306
