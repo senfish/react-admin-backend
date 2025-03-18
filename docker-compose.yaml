@@ -5,7 +5,7 @@ services:
       dockerfile: ./Dockerfile
     depends_on:
       - mysql-container
-      - redis-container
+      # - redis-container
     restart: always
     ports:
       - 3000:3000
