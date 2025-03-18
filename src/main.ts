@@ -18,6 +18,9 @@ async function bootstrap() {
   // );
   app.enableCors();
 
+  // 设置全局路由前缀
+  app.setGlobalPrefix('api');
+
   const config = new DocumentBuilder()
     .setTitle('Test example')
     .setDescription('The Api description')
