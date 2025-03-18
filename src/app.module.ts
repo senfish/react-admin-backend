@@ -10,7 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 import { ArticleModule } from './article/article.module';
 import { MonitorModule } from './monitor/monitor.module';
-import { createClient } from 'redis';
+// import { createClient } from 'redis';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import * as dayjs from 'dayjs';
 import * as utc from 'dayjs/plugin/utc';
@@ -65,20 +65,20 @@ dayjs.tz.setDefault('Asia/Shanghai');
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    {
-      provide: 'REDIS_CLIENT',
-      inject: [ConfigService],
-      async useFactory(config: ConfigService) {
-        const client = createClient({
-          socket: {
-            host: config.get('RD_HOST'),
-            port: config.get('RD_PORT'),
-          },
-        });
-        await client.connect();
-        return client;
-      },
-    },
+    // {
+    //   provide: 'REDIS_CLIENT',
+    //   inject: [ConfigService],
+    //   async useFactory(config: ConfigService) {
+    //     const client = createClient({
+    //       socket: {
+    //         host: config.get('RD_HOST'),
+    //         port: config.get('RD_PORT'),
+    //       },
+    //     });
+    //     await client.connect();
+    //     return client;
+    //   },
+    // },
   ],
 })
 export class AppModule {}
